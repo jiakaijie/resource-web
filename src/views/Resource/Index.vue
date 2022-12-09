@@ -17,7 +17,7 @@
       </el-form-item>
       <el-form-item label="创建人：">
         <el-select 
-          v-model="queryParams.create_user_id" 
+          v-model="queryParams.create_user" 
           clearable
           remote>
           <el-option 
@@ -30,7 +30,7 @@
       </el-form-item>
       <el-form-item label="修改人：">
         <el-select 
-          v-model="queryParams.update_user_id" 
+          v-model="queryParams.update_user" 
           clearable
           remote>
           <el-option 
@@ -51,9 +51,9 @@
       <el-table-column prop="name" align="center" label="资源名称" />
       <el-table-column prop="desc" align="center" label="资源描述" />
       <el-table-column prop="create_time" align="center" label="创建时间" />
-      <el-table-column prop="create_user_id" align="center" label="创建人" />
+      <el-table-column prop="create_user" align="center" label="创建人" />
       <el-table-column prop="update_time" align="center" label="修改时间"/>
-      <el-table-column prop="update_user_id" align="center" label="修改人" />
+      <el-table-column prop="update_user" align="center" label="修改人" />
       <el-table-column prop="version_id" align="center" label="当前版本" />
       <el-table-column align="url" label="资源链接">
         <template #default="scope">

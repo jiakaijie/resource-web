@@ -8,8 +8,16 @@ import store from './store'
 import './assets/css/reset.css'
 import 'element-plus/dist/index.css'
 
-createApp(App)
-  .use(ElementPlus, {
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+
+const app = createApp(App)
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //@ts-ignore
+  app.component(key, component)
+}
+
+app.use(ElementPlus, {
     locale: zhCn
   })
   .use(store)

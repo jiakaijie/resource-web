@@ -7,19 +7,19 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/resource',
-    component: () => import(/* webpackChunkName: "home" */ '../views/Home/Index.vue'),
+    component: () => import(/* webpackChunkName: "resource" */ '../views/Home/Index.vue'),
     children: [
       {
         path: '/resource/list',
-        component: () => import(/* webpackChunkName: "stu" */ '../views/Resource/Index.vue')
+        component: () => import(/* webpackChunkName: "resourcelist" */ '../views/Resource/Index.vue')
       },
       {
-        path: '/resource/edite',
-        component: () => import(/* webpackChunkName: "stuDetails" */ '../views/Resource/Edite.vue')
+        path: '/resource/edit',
+        component: () => import(/* webpackChunkName: "edit" */ '../views/Resource/Edit.vue')
       },
       {
         path: '/user/list',
-        component: () => import(/* webpackChunkName: "buWeChat" */ '../views/User/Index.vue')
+        component: () => import(/* webpackChunkName: "userlist" */ '../views/User/Index.vue')
       },
       {
         path: '/other',

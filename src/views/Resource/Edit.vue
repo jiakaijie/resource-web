@@ -92,7 +92,7 @@ import {formatSubmateData} from "./formatSubmitdata.js";
     
     const handleSubmit = () => {
         const res = formatSubmateData(root);
-        console.log('root', root);
+        console.log('root', res);
     };
 
     const cancel = ()=> {

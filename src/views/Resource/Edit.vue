@@ -38,7 +38,7 @@
             </el-select>
         </el-col>
         
-         <el-col :span="6">
+        <el-col :span="6">
             <el-input v-model="root.value" :disabled="root.type === 'array' || root.type === 'object'" placeholder="值"></el-input>
         </el-col>
         <el-col :span="4">
@@ -48,11 +48,11 @@
             <el-icon v-if="root.type === 'object' || root.type === 'array'" @click="handlePlus"><Plus /></el-icon>
         </el-col>
     </el-row>
-     
-       <z-tree 
-        :data="root.children"
-        :root-type="root.type"
-       ></z-tree>
+    
+    <z-tree 
+      :data="root.children"
+      :root-type="root.type"
+    ></z-tree>
 
   </div>
   <div class="btn-area">
@@ -76,7 +76,7 @@ import {formatSubmateData} from "./formatSubmitdata.js";
     const dataType = reactive(dataTypeConfig);
 
     const tableData = reactive({});
-   
+  
     const resourceData = reactive({
         name: "",
         desc: ""
@@ -88,7 +88,7 @@ import {formatSubmateData} from "./formatSubmitdata.js";
         value: "",
         children: []
     });
-   
+  
     
     const handleSubmit = () => {
         const res = formatSubmateData(root);

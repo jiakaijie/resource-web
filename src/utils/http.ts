@@ -5,9 +5,9 @@ import { env } from '../config/env';
 
 
 const goLogin = (data: any) => {
-//   if (data.code === 401) {
-//     location.href = '/login'
-//   }
+  if (data.code === 401) {
+    location.href = '/login'
+  }
 }
 
 const http = axios.create({

@@ -32,3 +32,15 @@ export const getyyyymmdd = (date: any): string => {
   const dd = myDate.getDate();
   return `${yyyy}-${getStr(mm)}-${getStr(dd)}`;
 }
+
+export const getMMss = (data: any): string => {
+  const myDate = new Date(data);
+  return `${getStr(myDate.getHours())}:${getStr(myDate.getMinutes())}`
+}
+
+export const getyyyymmddMMss = (date: any) => {
+  const day = getyyyymmdd(date);
+  const ms = getMMss(date);
+
+  return `${day} ${ms}`;
+}

@@ -1,6 +1,12 @@
 <template>
-  <el-form :model="resourceData" :inline="true">
-    <el-form-item label="资源名称：" prop="name">
+  <el-form ref="formRef" :model="resourceData" :inline="true" :rules="rules">
+    <el-form-item label="资源名称：" prop="name" :rules="[
+        {
+          required: true,
+          message: '资源名称未填',
+          trigger: ['change'],
+        },
+      ]">
       <el-input v-model="resourceData.name" clearable />
     </el-form-item>
     <el-form-item label="资源描述：">
@@ -56,7 +62,7 @@
 
   </div>
   <div class="btn-area">
-    <el-button type="primary" @click="handleSubmit"
+    <el-button type="primary" @click="handleSubmit(formRef)"
       >确 定</el-button
     >
     <el-button @click="cancel">取 消</el-button>
@@ -64,12 +70,18 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch, reactive, nextTick } from "vue";
+import { computed, ref, watch, reactive, nextTick, onMounted } from "vue";
+import { useRoute } from 'vue-router';
 import { ElMessage, FormInstance, FormRules } from "element-plus";
 import ZTree from "./ZTree.vue";
 
+import { getResourceList, createResource, getResourceDetail, updateResource } from '../../api/resource'
 import {formatSubmateData} from "./formatSubmitdata.js";
 
+    const route = useRoute();
+    const isEdit = ref(false);
+
+    const formRef = ref<FormInstance>()
     const dataTypeConfig = [
       "string","number", "array","object",
     ];
@@ -88,11 +100,36 @@ import {formatSubmateData} from "./formatSubmitdata.js";
         value: "",
         children: []
     });
-  
-    
-    const handleSubmit = () => {
-        const res = formatSubmateData(root);
-        console.log('root', res);
+
+    const handleSubmit = async (formEl: FormInstance | undefined) => {
+        if (!formEl) return
+        formEl.validate(async (valid) => {
+          if (valid) {
+            const data = formatSubmateData(root);
+            console.log('root', data);
+
+            const bodyData: any = {
+              resourceName: resourceData.name,
+              resourceDesc: resourceData.desc,
+              data
+            }
+            try {
+              if (isEdit.value) {
+                bodyData._id = route.query.id;
+                const res = await updateResource(bodyData);
+                ElMessage.success('编辑成功');
+              } else {
+                const res = await createResource(bodyData);
+                ElMessage.success('创建成功');
+              }
+            } catch (err) {
+              ElMessage.error('创建异常');
+            }
+          } else {
+            console.log('error submit!')
+            return false
+          }
+        })
     };
 
     const cancel = ()=> {
@@ -109,6 +146,25 @@ import {formatSubmateData} from "./formatSubmitdata.js";
             root.children = [];
         }
     }
+
+    const myGetResourceDetail = async (id: any) => {
+      const data: any = await getResourceDetail(id);
+      const { name, desc, data: resData } = data || {};
+
+      resourceData.name = name;
+      resourceData.desc = desc;
+    }
+
+    onMounted(async () => {
+      if (route && route.query && route.query.id) {
+        isEdit.value = true;
+
+        myGetResourceDetail(route.query.id);
+      } else {
+        isEdit.value = true;
+      }
+
+    })
 
 </script>
 <style lang="less" scoped>

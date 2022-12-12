@@ -50,24 +50,53 @@
       <el-table-column prop="_id" align="center" label="资源ID" />
       <el-table-column prop="name" align="center" label="资源名称" />
       <el-table-column prop="desc" align="center" label="资源描述" />
-      <el-table-column prop="create_time" align="center" label="创建时间" />
+      <el-table-column prop="create_time" align="center" label="创建时间">
+        <template #default="scope">
+          {{ getTime(scope.row.create_time) }}
+        </template>
+      </el-table-column>
       <el-table-column prop="create_user" align="center" label="创建人" />
-      <el-table-column prop="update_time" align="center" label="修改时间"/>
+      <el-table-column prop="update_time" align="center" label="修改时间">
+        <template #default="scope">
+          {{ getTime(scope.row.update_time) }}
+        </template>
+      </el-table-column>
       <el-table-column prop="update_user" align="center" label="修改人" />
-      <el-table-column prop="version_id" align="center" label="当前版本" />
-      <el-table-column align="url" label="资源链接">
+      <el-table-column prop="version_id" align="center" label="当前版本">
+        <template #default="scope">
+          {{ getVersion(scope.row) }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="资源链接">
         <template #default="scope">
           {{ getUrltext(scope.row) }}
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="150">
+      <el-table-column label="操作" align="center" width="180">
         <template #default="scope">
           <el-button
             type="text"
-            circle
             plain
             @click.stop="onClickDetail(scope.row)"
-            >详情</el-button
+            >编辑</el-button
+          >
+          <el-button
+            type="text"
+            plain
+            @click.stop="onClickDetail(scope.row)"
+            >发布</el-button
+          >
+          <el-button
+            type="text"
+            plain
+            @click.stop="onClickDetail(scope.row)"
+            >回滚</el-button
+          >
+          <el-button
+            type="text"
+            plain
+            @click.stop="onClickDetail(scope.row)"
+            >版本</el-button
           >
         </template>
       </el-table-column>
@@ -92,7 +121,8 @@
 import { reactive, onMounted, toRefs, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
-import { getResourceList } from '../../api/resource'
+import { getResourceList } from '../../api/resource';
+import { getyyyymmdd, getyyyymmddMMss } from '../../utils/time';
 
 const router = useRouter();
 const store = useStore();
@@ -110,8 +140,14 @@ const user = computed(() => store.state.user);
 const allUserList = computed(() => store.state.allUserList);
 const { loading, total, queryParams, list } = toRefs(state);
 
+const getVersion = (item) => {
+  return item.version_id ? item.version : '暂未发布版本'
+}
+const getTime = (time) => {
+  return getyyyymmddMMss(time)
+}
 const getUrltext = (item) => {
-  return item.url || '';
+  return item.url ? item.url : '暂未发布版本';
 }
 
 async function handleQuery() {
@@ -144,11 +180,11 @@ function resetQuery() {
   handleQuery();
 }
 
-const onClickDetail = (data) => {
+const onClickDetail = (item) => {
   router.push({
-    path: `/bu/stuDetails`,
+    path: `/resource/edit`,
     query: {
-      id: data.id
+      id: item._id
     }
   });
 };

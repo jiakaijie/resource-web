@@ -1,11 +1,11 @@
 const utils = {
-    isSimpleType: (type) => {
+    isSimpleType: (type: string): boolean => {
         return ['string', 'number', 'img'].includes(type);
     },
-    isArrayType: (type) => {
+    isArrayType: (type: string): boolean => {
         return type === 'array';
     },
-    isObjectType: (type) => {
+    isObjectType: (type: string): boolean => {
         return type === 'object';
     }
 };

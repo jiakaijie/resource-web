@@ -10,6 +10,7 @@
                     
             <el-select 
                 v-model="item.type" 
+                style="width: 100%"
                 @change="handleChange(item.type, index)"
             >
                 <el-option
@@ -22,13 +23,27 @@
         </el-col>
         
          <el-col :span="6">
-            <el-input v-model="item.value"  placeholder="值"></el-input>
+            <el-input
+                v-model="item.value"
+                placeholder="值"
+                v-if="item.type === 'img'"
+            >
+                <template #append>
+                    <el-button > <el-icon><UploadFilled /></el-icon> </el-button>
+                </template>
+            </el-input>
+            <el-input 
+                v-else
+                v-model="item.value" 
+                :disabled="item.type === 'array' || item.type === 'object'"  
+                placeholder="值"
+            ></el-input>
         </el-col>
         <el-col :span="4">
             <el-input v-model="item.desc" placeholder="描述"></el-input>
         </el-col>
         <el-col :span="2">
-            <el-dropdown v-if="rootType === 'object' &&item.type === 'object'">
+            <el-dropdown v-if="item.type === 'array' || item.type === 'object'">
                 <el-icon ><Plus /></el-icon>
                 <template #dropdown>
                 <el-dropdown-menu>
@@ -47,6 +62,7 @@
 
 <script lang="ts">
 import { defineComponent, reactive, toRefs } from "vue";
+import { utils } from "./utils";
 
 
 export default defineComponent({
@@ -64,7 +80,7 @@ export default defineComponent({
   },
   setup(props) {
     const dataTypeConfig = [
-      "string","number", "array","object",
+      "string", "number", "img", "array","object",
     ];
     const {data} = toRefs<any>(props);
     console.log('data', data);
@@ -93,9 +109,11 @@ export default defineComponent({
     }
 
     const handleChange = (type: string, index: number)=> {
-        console.log('1111')
-        if (['string', 'number'].includes(type)) {
+        if (utils.isSimpleType(type)) {
             data.value[index].children = [];
+        } else if (utils.isArrayType(type)) {
+            data.value[index].children = [];
+            addSub(index);
         }
         console.log('1111', data)
     }

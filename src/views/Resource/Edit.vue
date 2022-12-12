@@ -1,5 +1,5 @@
 <template>
-  <el-form ref="formRef" :model="resourceData" :inline="true" :rules="rules">
+  <el-form ref="formRef" :model="resourceData" :inline="true">
     <el-form-item label="资源名称：" prop="name" :rules="[
         {
           required: true,
@@ -13,17 +13,6 @@
       <el-input v-model="resourceData.desc" clearable />
     </el-form-item>
   </el-form>
-  <div>
-    数据类型：
-    <el-select v-model="tableData.type">
-      <el-option
-        v-for="item in dataType"
-        :key="item"
-        :label="item"
-        :value="item"
-      ></el-option>
-    </el-select>
-  </div>
 
   <div class="data-control">
     <el-row :gutter="20">
@@ -34,6 +23,7 @@
             <el-select 
                 v-model="root.type"
                 @change="handleChange"
+                style="width: 100%"
             >
                 <el-option
                     v-for="item in dataType"
@@ -45,7 +35,27 @@
         </el-col>
         
         <el-col :span="6">
-            <el-input v-model="root.value" :disabled="root.type === 'array' || root.type === 'object'" placeholder="值"></el-input>
+            <el-input
+                v-model="root.value"
+                placeholder="值"
+                v-if="root.type === 'img'"
+            >
+                <template #append>
+                    <el-upload
+                        :show-file-list="false"
+                        action="http://192.168.1.107:3000/api/upload/files"
+                        :limit="1"
+                        @success="uploadSucess"
+                    >
+                        <el-button > <el-icon><UploadFilled /></el-icon> </el-button>
+                    </el-upload>
+                </template>
+            </el-input>
+            <el-input 
+                v-else
+                v-model="root.value" 
+                :disabled="root.type === 'array' || root.type === 'object'" 
+                placeholder="值"></el-input>
         </el-col>
         <el-col :span="4">
             <el-input v-model="root.desc" placeholder="描述"></el-input>
@@ -72,18 +82,20 @@
 <script lang="ts" setup>
 import { computed, ref, watch, reactive, nextTick, onMounted } from "vue";
 import { useRoute } from 'vue-router';
-import { ElMessage, FormInstance, FormRules } from "element-plus";
+import { ElMessage, FormInstance, UploadUserFile } from "element-plus";
 import ZTree from "./ZTree.vue";
 
 import { getResourceList, createResource, getResourceDetail, updateResource } from '../../api/resource'
 import {formatSubmateData} from "./formatSubmitdata.js";
+import {utils} from "./utils";
 
     const route = useRoute();
     const isEdit = ref(false);
+    const fileList = ref<UploadUserFile[]>([])
 
     const formRef = ref<FormInstance>()
     const dataTypeConfig = [
-      "string","number", "array","object",
+      "string","number", "img", "array","object",
     ];
     const dataType = reactive(dataTypeConfig);
 
@@ -142,9 +154,14 @@ import {formatSubmateData} from "./formatSubmitdata.js";
     }
 
     const handleChange = ()=> {
-        if (['string', 'number'].includes(root.type)) {
+        if (utils.isSimpleType(root.type)) {
             root.children = [];
         }
+    }
+
+    const uploadSucess = (response: any)=> {
+        console.log('upload', response);
+        root.value = "1111";
     }
 
     const myGetResourceDetail = async (id: any) => {

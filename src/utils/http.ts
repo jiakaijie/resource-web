@@ -57,7 +57,7 @@ http
 
 
       if (code !== 0) {
-        console.log('errmsg------', msg);
+        // console.log('errmsg------', msg);
         // 提示弹窗
         return data;
       }

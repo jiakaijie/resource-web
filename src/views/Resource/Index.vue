@@ -4,22 +4,19 @@
       <el-form-item label="资源ID：">
         <el-input
           v-model="queryParams._id"
-          clearable
           @keyup.enter="handleQuery"
         />
       </el-form-item>
       <el-form-item label="资源名称：">
         <el-input
           v-model="queryParams.name"
-          clearable
           @keyup.enter="handleQuery"
         />
       </el-form-item>
       <el-form-item label="创建人：">
         <el-select 
-          v-model="queryParams.create_user" 
-          clearable
-          remote>
+          v-model="queryParams.create_user_id" 
+          >
           <el-option 
             v-for="item in allUserList" 
             :key="item._id"
@@ -30,9 +27,8 @@
       </el-form-item>
       <el-form-item label="修改人：">
         <el-select 
-          v-model="queryParams.update_user" 
-          clearable
-          remote>
+          v-model="queryParams.update_user_id" 
+          >
           <el-option 
             v-for="item in allUserList" 
             :key="item._id"
@@ -75,25 +71,29 @@
       <el-table-column label="操作" align="center" width="180">
         <template #default="scope">
           <el-button
-            type="text"
+            type="primary"
+            link
             plain
             @click.stop="onClickDetail(scope.row)"
             >编辑</el-button
           >
           <el-button
-            type="text"
+            type="primary"
+            link
             plain
             @click.stop="onClickDetail(scope.row)"
             >发布</el-button
           >
           <el-button
-            type="text"
+            type="primary"
+            link
             plain
             @click.stop="onClickDetail(scope.row)"
             >回滚</el-button
           >
           <el-button
-            type="text"
+            type="primary"
+            link
             plain
             @click.stop="onClickDetail(scope.row)"
             >版本</el-button
@@ -107,7 +107,7 @@
       <el-pagination
         v-model:currentPage="queryParams.page"
         v-model:page-size="queryParams.page_size"
-        :page-sizes="[10, 20, 50, 100]"
+        :page-sizes="[5, 10, 20, 50, 100]"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
         @size-change="handleQuery"

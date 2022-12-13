@@ -19,9 +19,17 @@ export const getUserInfo = (): AxiosPromise<any> => {
   })
 }
 
-export const getUsersList = (): AxiosPromise<any> => {
+export const getUsersList = (data: any): AxiosPromise<any> => {
   return http({
     url: '/api/users/list',
+    method: 'GET',
+    params: data
+  })
+}
+
+export const getAllUsersList = (): AxiosPromise<any> => {
+  return http({
+    url: '/api/users/allList',
     method: 'GET',
   })
 }

@@ -4,14 +4,18 @@
       <el-form-item label="姓名：">
         <el-input
           v-model="queryParams.name"
-          clearable
+          @keyup.enter="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="邮箱：">
+        <el-input
+          v-model="queryParams.email"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
       <el-form-item label="工号：">
         <el-input
-          v-model="queryParams.name"
-          clearable
+          v-model="queryParams.workcode"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
@@ -39,8 +43,8 @@
         <template #default="scope">
           <el-button
             :disabled="user.role ===0"
-            type="text"
-            plain
+            type="primary"
+            link
             @click.stop="onClickUser(scope.row)"
             >编辑角色</el-button
           >
@@ -53,7 +57,7 @@
       <el-pagination
         v-model:currentPage="queryParams.page"
         v-model:page-size="queryParams.page_size"
-        :page-sizes="[10, 20, 50, 100]"
+        :page-sizes="[5, 10, 20, 50, 100]"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
         @size-change="handleQuery"
@@ -89,13 +93,11 @@ import { useStore } from "vuex";
 
 import { ElMessage, FormInstance, FormRules } from "element-plus";
 import { getUsersList, updateUserRole } from '../../api/login';
-import { getyyyymmdd, getyyyymmddMMss } from '../../utils/time';
+import { getyyyymmddMMss } from '../../utils/time';
 
-const router = useRouter();
 const store = useStore();
 
 const state = reactive({
-  dialogFormVisible: false,
   loading: false,
   total: 0,
   queryParams: {
@@ -103,6 +105,7 @@ const state = reactive({
     page_size: 10,
   },
   list: [],
+  dialogFormVisible: false,
   dialogForm: {
     role: 0,
   }

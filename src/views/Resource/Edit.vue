@@ -131,6 +131,7 @@ import {utils} from "./utils";
                 const res = await updateResource(bodyData);
                 ElMessage.success('编辑成功');
               } else {
+                // debugger
                 const res = await createResource(bodyData);
                 ElMessage.success('创建成功');
               }
@@ -178,7 +179,7 @@ import {utils} from "./utils";
 
         myGetResourceDetail(route.query.id);
       } else {
-        isEdit.value = true;
+        console.log(123);
       }
 
     })

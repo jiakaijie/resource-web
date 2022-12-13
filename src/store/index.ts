@@ -1,5 +1,5 @@
 import { createStore } from 'vuex';
-import { getUserInfo, getUsersList } from '../api/login';
+import { getUserInfo, getAllUsersList } from '../api/login';
 
 
 export default createStore({
@@ -21,7 +21,7 @@ export default createStore({
       commit('USER', data);
     },
     'GET_ALL_USER': async ({ commit }) => {
-      const data = await getUsersList();
+      const data = await getAllUsersList();
       commit('ALL_USER_LIST', data);
     }
   },

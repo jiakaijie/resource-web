@@ -11,7 +11,7 @@ export default defineComponent({
   name: "Home",
   components: {},
   setup() {
-    const title = ref<string>("login");
+    const title = ref<string>("介绍");
 
     return {
       title,

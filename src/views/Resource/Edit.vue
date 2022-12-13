@@ -43,7 +43,7 @@
                 <template #append>
                     <el-upload
                         :show-file-list="false"
-                        action="http://192.168.1.107:3000/api/upload/files"
+                        :action="`${host}/api/upload/files`"
                         :limit="1"
                         @success="uploadSucess"
                     >
@@ -88,6 +88,10 @@ import ZTree from "./ZTree.vue";
 import { getResourceList, createResource, getResourceDetail, updateResource } from '../../api/resource'
 import {formatSubmateData} from "./formatSubmitdata.js";
 import {utils} from "./utils";
+import {apiHostConfig} from "@/config/host";
+import {env} from "@/config/env";
+
+    const host = ref<string>(apiHostConfig[env]);
 
     const route = useRoute();
     const isEdit = ref(false);
@@ -161,7 +165,8 @@ import {utils} from "./utils";
 
     const uploadSucess = (response: any)=> {
         console.log('upload', response);
-        root.value = "1111";
+        const {url} = response.data;
+        root.value = url;
     }
 
     const myGetResourceDetail = async (id: any) => {

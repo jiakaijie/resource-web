@@ -29,7 +29,14 @@
                 v-if="item.type === 'img'"
             >
                 <template #append>
-                    <el-button > <el-icon><UploadFilled /></el-icon> </el-button>
+                    <el-upload
+                        :show-file-list="false"
+                        :action="`${host}/api/upload/files`"
+                        :limit="1"
+                        @success="uploadSucess"
+                    >
+                        <el-button @click="currentItem(index)"> <el-icon><UploadFilled /></el-icon> </el-button>
+                    </el-upload>
                 </template>
             </el-input>
             <el-input 
@@ -61,8 +68,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, toRefs } from "vue";
+import { defineComponent, reactive, toRefs, ref } from "vue";
 import { utils } from "./utils";
+import {apiHostConfig} from "@/config/host";
+import {env} from "@/config/env";
+
 
 
 export default defineComponent({
@@ -85,6 +95,8 @@ export default defineComponent({
     const {data} = toRefs<any>(props);
     console.log('data', data);
     const dataType = reactive(dataTypeConfig);
+    const host = ref<string>(apiHostConfig[env]);
+
     const handlePlus = (curdata: any, index: number, type?: string) => {
         if (type === 'sub') {
             addSub(index);
@@ -107,6 +119,13 @@ export default defineComponent({
     const handleMinus = (index: number)=> {
         data.value.splice(index, 1);
     }
+    let currentItemIndex = -1;
+    const uploadSucess = (response: any)=> {
+        console.log('upload', response);
+        const {url} = response.data;
+        data.value[currentItemIndex].value = url;
+        currentItemIndex = -1;
+    }
 
     const handleChange = (type: string, index: number)=> {
         if (utils.isSimpleType(type)) {
@@ -115,11 +134,16 @@ export default defineComponent({
             data.value[index].children = [];
             addSub(index);
         }
-        console.log('1111', data)
+    }
+    const currentItem = (index: number)=> {
+        currentItemIndex = index;
     }
    
     return {
         dataType,
+        host,
+        currentItem,
+        uploadSucess,
         handlePlus,
         handleMinus,
         handleChange

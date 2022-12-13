@@ -2,7 +2,10 @@
   <div class="header">
     <div class="user-info">
       <img width="30" height="30" class="user-avatar" />
-      <span class="user-name">{{ user.name }}</span>
+      <span class="user-name">
+        {{ user.name }}
+        <el-button style="margin-left: 10px;" plain disabled>{{ roleTitle }}</el-button>
+      </span>
     </div>
   </div>
 </template>
@@ -13,6 +16,9 @@ import { useStore } from "vuex";
 const store = useStore();
 
 const user = computed(() => store.state.user);
+const roleTitle = computed(() => {
+  return user.value.role === 0 ? '普通用户' : '超级管理员';
+})
 
 onMounted(() => {
   store.dispatch('GET_USER');

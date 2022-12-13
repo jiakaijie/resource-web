@@ -26,3 +26,10 @@ export const getUsersList = (): AxiosPromise<any> => {
   })
 }
 
+export const updateUserRole = (data: any): AxiosPromise<any> => {
+  return http({
+    url: '/api/users/update',
+    method: 'POST',
+    data
+  })
+}

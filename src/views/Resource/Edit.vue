@@ -112,7 +112,7 @@ import {env} from "@/config/env";
 
     const formRef = ref<FormInstance>()
     const dataTypeConfig = [
-      "string","number", "img", "array","object",
+       "array","object",
     ];
     const dataType = reactive(dataTypeConfig);
 

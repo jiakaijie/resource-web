@@ -87,6 +87,7 @@ import ZTree from "./ZTree.vue";
 
 import { getResourceList, createResource, getResourceDetail, updateResource } from '../../api/resource'
 import {formatSubmateData} from "./formatSubmitdata.js";
+import {formatGetData} from "./formatGetdata.js";
 import {utils} from "./utils";
 import {apiHostConfig} from "@/config/host";
 import {env} from "@/config/env";
@@ -173,6 +174,11 @@ import {env} from "@/config/env";
     const myGetResourceDetail = async (id: any) => {
       const data: any = await getResourceDetail(id);
       const { name, desc, data: resData } = data || {};
+
+      const res = formatGetData(resData);
+      Object.assign(root, res);
+
+      console.log('res', res, root);
 
       resourceData.name = name;
       resourceData.desc = desc;

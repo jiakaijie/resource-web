@@ -1,6 +1,15 @@
 import {utils} from "./utils"; 
 const isImg = (data) => {
-    return [".png", ".jpg", ".jpeg", ".webp", ".gif"].includes(data);
+    const typeArr = [".png", ".jpg", ".jpeg", ".webp", ".gif"];
+
+    let isImgValue = false;
+    typeArr.forEach(item => {
+        if (data.includes(item)) {
+            isImgValue = true;
+        }
+    })
+
+    return isImgValue;
 }
 
 const getType = (data) => {

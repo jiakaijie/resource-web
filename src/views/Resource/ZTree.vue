@@ -63,7 +63,7 @@
             <el-icon @click="handleMinus(index)"><Minus /></el-icon>
         </el-col>
     </el-row>
-    <z-tree v-if="item && item.children" :data="item.children" :root-type="item.type"></z-tree>
+    <z-tree v-if="item.children && item.children.length" :data="item.children" :root-type="item.type"></z-tree>
   </div>
 </template>
 
@@ -113,7 +113,7 @@ export default defineComponent({
             data.value[index].children = [];
         }
         data.value[index].children.push({
-            id: Date.now()
+            id: Math.random().toString()
         });
     }
     const handleMinus = (index: number)=> {

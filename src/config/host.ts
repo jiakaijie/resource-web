@@ -1,5 +1,5 @@
 export const apiHostConfig = {
-  dev: 'http://192.168.1.104:3000',
+  dev: 'http://192.168.1.106:3000',
   // dev: 'http://xxx',
   test: 'https://test-xxx.com',
   gray: 'https://gray-xxx.com',

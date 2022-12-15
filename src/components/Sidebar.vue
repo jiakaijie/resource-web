@@ -67,6 +67,10 @@ const menuList = reactive([
         index: "/resource/edit",
         name: "创建资源",
       },
+      {
+        index: "/version/list",
+        name: "版本列表",
+      },
     ],
   },
   {

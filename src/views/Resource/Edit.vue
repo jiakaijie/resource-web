@@ -7,10 +7,13 @@
           trigger: ['change'],
         },
       ]">
-      <el-input v-model="resourceData.name" clearable />
+      <el-input v-model="resourceData.name" />
     </el-form-item>
     <el-form-item label="资源描述：">
-      <el-input v-model="resourceData.desc" clearable />
+      <el-input v-model="resourceData.desc" />
+    </el-form-item>
+    <el-form-item>
+      <el-button type="primary" @click="onClickWatchData">查看当前数据</el-button>
     </el-form-item>
   </el-form>
 
@@ -77,13 +80,19 @@
     >
     <el-button @click="cancel">取 消</el-button>
   </div>
+  <JsonViewDialog 
+    :json-data="jsonData" 
+    :is-show="isShowJson"
+    :close="()=> (isShowJson = false)"
+  />
 </template>
 
 <script lang="ts" setup>
 import { computed, ref, watch, reactive, nextTick, onMounted } from "vue";
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { ElMessage, FormInstance, UploadUserFile } from "element-plus";
 import ZTree from "./ZTree.vue";
+import JsonViewDialog from '../../components/JsonViewDialog.vue'
 
 import { getResourceList, createResource, getResourceDetail, updateResource } from '../../api/resource'
 import {formatSubmateData} from "./formatSubmitdata.js";
@@ -95,7 +104,10 @@ import {env} from "@/config/env";
     const host = ref<string>(apiHostConfig[env]);
 
     const route = useRoute();
+    const router = useRouter();
     const isEdit = ref(false);
+    const isShowJson = ref(false);
+    const jsonData = ref({});
     const fileList = ref<UploadUserFile[]>([])
 
     const formRef = ref<FormInstance>()
@@ -138,6 +150,9 @@ import {env} from "@/config/env";
               } else {
                 // debugger
                 const res = await createResource(bodyData);
+                router.push({
+                  path: '/resource/list'
+                })
                 ElMessage.success('创建成功');
               }
             } catch (err) {
@@ -182,6 +197,12 @@ import {env} from "@/config/env";
 
       resourceData.name = name;
       resourceData.desc = desc;
+    }
+
+    const onClickWatchData = () => {
+      jsonData.value = formatSubmateData(root);
+      console.log('jsonData', jsonData.value);
+      isShowJson.value = true;
     }
 
     onMounted(async () => {

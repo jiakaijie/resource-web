@@ -64,12 +64,12 @@ const menuList = reactive([
         name: "资源列表",
       },
       {
-        index: "/resource/edit",
-        name: "创建资源",
-      },
-      {
         index: "/version/list",
         name: "版本列表",
+      },
+      {
+        index: "/resource/edit",
+        name: "新建资源",
       },
     ],
   },

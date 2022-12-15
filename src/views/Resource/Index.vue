@@ -70,7 +70,17 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="180">
         <template #default="scope">
+          <el-tooltip content="资源对应的所有版本" placement="top">
+            <el-button
+              type="primary"
+              link
+              plain
+              @click.stop="onClickToVersion(scope.row)"
+              >版本</el-button
+            >
+          </el-tooltip>
           <el-button
+            :disabled="isCanClick(scope.row)"
             type="primary"
             link
             plain
@@ -78,6 +88,7 @@
             >编辑</el-button
           >
           <el-button
+            :disabled="isCanClick(scope.row)"
             type="primary"
             link
             plain
@@ -85,18 +96,12 @@
             >发布</el-button
           >
           <el-button
+            :disabled="isCanClick(scope.row)"
             type="primary"
             link
             plain
             @click.stop="onClickDetail(scope.row)"
             >回滚</el-button
-          >
-          <el-button
-            type="primary"
-            link
-            plain
-            @click.stop="onClickDetail(scope.row)"
-            >版本</el-button
           >
         </template>
       </el-table-column>
@@ -139,6 +144,10 @@ const state = reactive({
 const user = computed(() => store.state.user);
 const allUserList = computed(() => store.state.allUserList);
 const { loading, total, queryParams, list } = toRefs(state);
+
+const isCanClick = (item) => {
+  return !(user.value.role === 1 || item.create_user_id === user.value._id);
+}
 
 const getVersion = (item) => {
   return item.version_id ? item.version : '暂未发布版本'
@@ -188,6 +197,15 @@ const onClickDetail = (item) => {
     }
   });
 };
+
+const onClickToVersion = (item) => {
+  router.push({
+    path: `/version/list`,
+    query: {
+      resource_id: item._id
+    }
+  });
+}
 
 onMounted(() => {
   handleQuery();

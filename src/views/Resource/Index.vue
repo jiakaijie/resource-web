@@ -40,7 +40,7 @@
       <el-form-item>
         <el-button type="primary" @click="handleQuery">搜索</el-button>
         <el-button @click="resetQuery">重置</el-button>
-        <el-button type="primary" @click="onClickCreate">新建</el-button>
+        <el-button type="primary" @click="onClickCreate">新建资源</el-button>
       </el-form-item>
     </el-form>
     <el-table v-loading="loading" :data="list" border>
@@ -59,36 +59,25 @@
         </template>
       </el-table-column>
       <el-table-column prop="update_user" align="center" label="修改人" />
-      <el-table-column prop="version_id" align="center" label="当前版本">
+      <el-table-column prop="version_id" align="center" label="线上版本">
         <template #default="scope">
           {{ getVersion(scope.row) }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="资源链接">
+      <el-table-column align="center" label="资源链接" width="250px">
         <template #default="scope">
-          {{ getUrltext(scope.row) }}
+          <el-button v-if="scope.row.version_id"
+            style="white-space: normal;"
+            type="primary"
+            link
+            plain
+            @click.stop="onClickWatchUrl(scope.row)"
+          >{{scope.row.url}}</el-button>
+          <div v-else>{{ getUrltext(scope.row) }}</div>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="180">
+      <el-table-column label="操作" align="center" width="180px">
         <template #default="scope">
-          <el-tooltip content="查看当前资源数据" placement="top">
-            <el-button
-              type="primary"
-              link
-              plain
-              @click.stop="onClickWatchData(scope.row)"
-              >数据</el-button
-            >
-          </el-tooltip>
-          <el-tooltip content="资源对应的所有版本" placement="top">
-            <el-button
-              type="primary"
-              link
-              plain
-              @click.stop="onClickToVersion(scope.row)"
-              >版本</el-button
-            >
-          </el-tooltip>
           <el-button
             :disabled="isCanClick(scope.row)"
             type="primary"
@@ -110,9 +99,27 @@
             type="primary"
             link
             plain
-            @click.stop="onClickDetail(scope.row)"
+            @click.stop="onClickRollback(scope.row)"
             >回滚</el-button
           >
+          <el-tooltip content="查看当前资源数据" placement="top">
+            <el-button
+              type="primary"
+              link
+              plain
+              @click.stop="onClickWatchData(scope.row)"
+              >数据</el-button
+            >
+          </el-tooltip>
+          <el-tooltip content="资源对应的所有版本" placement="top">
+            <el-button
+              type="primary"
+              link
+              plain
+              @click.stop="onClickToVersion(scope.row)"
+              >版本</el-button
+            >
+          </el-tooltip>
         </template>
       </el-table-column>
     </el-table>
@@ -142,6 +149,23 @@
     :cancel="() => {isPublishShow = false}" 
     :confirm="() => {isPublishShow = false}"
   />
+  <el-dialog v-model="rollBackFormVisible" title="回滚版本">
+    <el-form :model="rollBackForm">
+      <el-form-item label="选择回滚版本">
+        <el-select v-model="rollBackForm.version_id">
+          <el-option v-for="(item, index) in versionList" :label="item.num" :value="item._id" :key="index" :disabled="nowVersion === item._id"/>
+        </el-select>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="rollBackFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="onClickRollbackConfirm">
+          确 定
+        </el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup>
@@ -149,6 +173,7 @@ import { reactive, onMounted, toRefs, computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { getResourceList } from '../../api/resource';
+import { getVersionList, rollbackVersion } from '../../api/version';
 import JsonViewDialog from '../../components/JsonViewDialog.vue';
 import PublishDialog from '../../components/PublishDialog.vue';
 import { ElMessage, ElMessageBox, FormInstance, FormRules } from "element-plus";
@@ -164,6 +189,12 @@ const isPublishShow = ref(false);
 const publishData = ref({});
 const publishResourceId = ref('')
 
+const rollBackFormVisible = ref(false);
+const rollBackForm = ref({
+  version_id: '',
+})
+const nowVersion = ref('');
+const versionList = ref([]);
 
 const state = reactive({
   loading: false,
@@ -189,7 +220,7 @@ const getTime = (time) => {
   return getyyyymmddMMss(time)
 }
 const getUrltext = (item) => {
-  return item.url ? item.url : '暂未发布版本';
+  return item.version_id ? item.url : '暂未发布版本';
 }
 
 async function handleQuery() {
@@ -255,6 +286,40 @@ const onClickPublish = (item) => {
   isPublishShow.value = true;
   publishResourceId.value = item._id;
   publishData.value = item.data;
+}
+
+const onClickWatchUrl = (item) => {
+  window.open(`${item.url}?t=${Date.now()}`)
+}
+
+const onClickRollback = async (item) => {
+  nowVersion.value = item.version_id;
+  const { list } = await getVersionList({
+    page: 1,
+    page_size: 10000,
+    resource_id: item._id
+  })
+  versionList.value = list;
+  rollBackFormVisible.value = true;
+}
+
+const onClickRollbackConfirm = async () => {
+  const res = await rollbackVersion({
+    version_id: rollBackForm.value.version_id,
+  })
+  if (res.isSuccess) {
+    ElMessage({
+      type: 'success',
+      message: '回滚成功',
+    })
+    rollBackFormVisible.value = false;
+    handleQuery();
+  } else {
+    ElMessage({
+      type: 'success',
+      message: '回滚失败',
+    })
+  }
 }
 
 onMounted(() => {

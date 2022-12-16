@@ -13,7 +13,9 @@
       <el-input v-model="resourceData.desc" />
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" @click="onClickWatchData">查看当前数据</el-button>
+      <el-button type="success" @click="onClickWatchData">查看当前数据</el-button>
+      <el-button type="primary" @click="handleSubmit(formRef)">保存</el-button
+    >
     </el-form-item>
   </el-form>
 
@@ -74,12 +76,6 @@
     ></z-tree>
 
   </div>
-  <div class="btn-area">
-    <el-button type="primary" @click="handleSubmit(formRef)"
-      >确 定</el-button
-    >
-    <el-button @click="cancel">取 消</el-button>
-  </div>
   <JsonViewDialog 
     :json-data="jsonData" 
     :is-show="isShowJson"
@@ -112,7 +108,7 @@ import {env} from "@/config/env";
 
     const formRef = ref<FormInstance>()
     const dataTypeConfig = [
-       "array","object",
+      "object",
     ];
     const dataType = reactive(dataTypeConfig);
 
@@ -146,17 +142,18 @@ import {env} from "@/config/env";
               if (isEdit.value) {
                 bodyData._id = route.query.id;
                 const res = await updateResource(bodyData);
+                console.log(res);
                 ElMessage.success('编辑成功');
               } else {
                 // debugger
                 const res = await createResource(bodyData);
-                router.push({
-                  path: '/resource/list'
-                })
                 ElMessage.success('创建成功');
               }
+              router.push({
+                  path: '/resource/list'
+              })
             } catch (err) {
-              ElMessage.error('创建异常');
+              ElMessage.error('异常');
             }
           } else {
             console.log('error submit!')

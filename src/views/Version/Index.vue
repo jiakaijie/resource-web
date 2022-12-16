@@ -46,17 +46,17 @@
             <el-button
               type="primary"
               link
-              @click.stop="onClickUser(scope.row)"
+              @click.stop="onClickWatchData(scope.row)"
               >数据</el-button
             >
           </el-tooltip>
-          <el-tooltip content="将此版本发布上线" placement="top" v-if="scope.row.is_online_version == 0">
+          <el-tooltip content="将该版本数据上线" placement="top" v-if="scope.row.is_online_version == 0">
             <el-button
               :disabled="isCanClick(scope.row)"
               type="primary"
               link
               @click.stop="onClickPublish(scope.row)"
-              >发布</el-button
+              >上线</el-button
             >
           </el-tooltip>
         </template>
@@ -76,20 +76,29 @@
       />
     </div>
 
+    <JsonViewDialog 
+      :json-data="jsonData" 
+      :is-show="isShowJson"
+      :close="()=> (isShowJson = false)"
+    />
   </div>
 </template>
 
 <script setup>
-import { reactive, onMounted, toRefs, computed } from "vue";
+import { reactive, onMounted, toRefs, computed, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 
+import JsonViewDialog from '../../components/JsonViewDialog.vue';
 import { ElMessage, ElMessageBox, FormInstance, FormRules } from "element-plus";
-import { getVersionList } from '../../api/version';
+import { getVersionList, rollbackVersion } from '../../api/version';
 import { getyyyymmddMMss } from '../../utils/time';
 
 const route = useRoute();
 const store = useStore();
+
+const isShowJson = ref(false);
+const jsonData = ref({});
 
 const state = reactive({
   isQuery: false,
@@ -156,9 +165,9 @@ const onClickUser = (item) => {
   };
 };
 
-const onClickPublish = () => {
+const onClickPublish = (item) => {
   ElMessageBox.confirm(
-    '发布后此版本将上线，线上版本将下线，确定发布',
+    '确定上线，此版本将上线，线上版本将下线',
     '警告',
     {
       confirmButtonText: '确定',
@@ -166,15 +175,31 @@ const onClickPublish = () => {
       type: 'warning',
     }
   )
-    .then(() => {
-      ElMessage({
-        type: 'success',
-        message: '成功',
+    .then(async () => {
+      const res = await rollbackVersion({
+        version_id: item._id,
       })
+      if (res.isSuccess) {
+        ElMessage({
+          type: 'success',
+          message: '上线成功',
+        })
+        handleQuery();
+      } else {
+        ElMessage({
+          type: 'success',
+          message: '上线失败',
+        })
+      }
     })
     .catch(() => {
       console.log();
     })
+}
+
+const onClickWatchData = (item) => {
+  jsonData.value = item.data;
+  isShowJson.value = true;
 }
 
 onMounted(() => {

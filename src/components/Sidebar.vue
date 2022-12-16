@@ -74,7 +74,7 @@ const menuList = reactive([
     ],
   },
   {
-    icon: "product",
+    icon: "student",
     name: "用户管理",
     show: true,
     subMenu: [

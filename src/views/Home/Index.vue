@@ -34,3 +34,8 @@ store.dispatch('GET_ALL_USER')
   }
 }
 </style>
+<style>
+.el-button.is-link:focus, .el-button.is-link:hover {
+  color: #409eff;
+}
+</style>

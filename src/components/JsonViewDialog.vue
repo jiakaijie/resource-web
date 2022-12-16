@@ -1,5 +1,5 @@
 <template>
-  <el-dialog v-model="visible" width="1000px" title="查看JSON" @close="props.close">
+  <el-dialog v-model="visible" width="1000px" title="查看JSON数据" @close="props.close">
     <json-viewer 
       :value="jsonData"  
       :expand-depth=10

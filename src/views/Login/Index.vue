@@ -19,7 +19,7 @@ export default defineComponent({
     const route = useRoute();
     const store = useStore();
 
-    const title = ref<string>("login");
+    const title = ref<string>("登录中");
 
     const getUrlToken = (): string | undefined => {
       return route.query.token as string | undefined;

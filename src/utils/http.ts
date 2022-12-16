@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { ElMessage } from "element-plus";
 
 import { apiHostConfig } from '../config/host';
 import { env } from '../config/env';
@@ -54,6 +55,14 @@ http
       code = code || 0;
       data = data || {};
       msg = msg || '';
+
+      if (code === 403) {
+        ElMessage({
+          type: 'error',
+          message: '没有权限',
+        })
+        return Promise.reject();
+      }
 
 
       if (code !== 0) {

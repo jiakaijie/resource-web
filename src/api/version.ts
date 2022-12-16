@@ -16,3 +16,12 @@ export const createVersion = (data: any): AxiosPromise<any> => {
     data,
   })
 }
+
+export const rollbackVersion = (data: any): AxiosPromise<any> => {
+  return http({
+    url: '/api/versions/rollback',
+    method: 'POST',
+    data,
+  })
+}
+

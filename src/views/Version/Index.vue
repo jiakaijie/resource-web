@@ -22,12 +22,12 @@
     <el-table v-loading="loading" :data="list" border>
       <el-table-column prop="_id" align="center" label="版本ID" />
       <el-table-column prop="resource_id" align="center" label="资源ID" />
-      <el-table-column prop="version" align="center" label="版本号">
+      <el-table-column prop="num" align="center" label="版本号">
         <template #default="scope">
-          <el-tag type="success">{{ scope.row.version }}</el-tag>
+          <el-tag type="success">{{ scope.row.num }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="version_desc" align="center" label="版本描述" />
+      <el-table-column prop="desc" align="center" label="版本描述" />
       <el-table-column prop="is_online_version" align="center" label="是否线上版本">
         <template #default="scope">
           <el-tag type="success" v-if="scope.row.is_online_version === 1">是</el-tag>

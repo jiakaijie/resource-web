@@ -71,6 +71,15 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="180">
         <template #default="scope">
+          <el-tooltip content="查看当前资源数据" placement="top">
+            <el-button
+              type="primary"
+              link
+              plain
+              @click.stop="onClickWatchData(scope.row)"
+              >数据</el-button
+            >
+          </el-tooltip>
           <el-tooltip content="资源对应的所有版本" placement="top">
             <el-button
               type="primary"
@@ -93,7 +102,7 @@
             type="primary"
             link
             plain
-            @click.stop="onClickDetail(scope.row)"
+            @click.stop="onClickPublish(scope.row)"
             >发布</el-button
           >
           <el-button
@@ -121,17 +130,40 @@
       />
     </div>
   </div>
+  <JsonViewDialog 
+    :json-data="jsonData" 
+    :is-show="isShowJson"
+    :close="()=> (isShowJson = false)"
+  />
+  <PublishDialog 
+    :is-show="isPublishShow"
+    :resource_id="publishResourceId"
+    :data="publishData"
+    :cancel="() => {isPublishShow = false}" 
+    :confirm="() => {isPublishShow = false}"
+  />
 </template>
 
 <script setup>
-import { reactive, onMounted, toRefs, computed } from "vue";
+import { reactive, onMounted, toRefs, computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { getResourceList } from '../../api/resource';
+import JsonViewDialog from '../../components/JsonViewDialog.vue';
+import PublishDialog from '../../components/PublishDialog.vue';
+import { ElMessage, ElMessageBox, FormInstance, FormRules } from "element-plus";
 import { getyyyymmdd, getyyyymmddMMss } from '../../utils/time';
 
 const router = useRouter();
 const store = useStore();
+
+const isShowJson = ref(false);
+const jsonData = ref({});
+
+const isPublishShow = ref(false);
+const publishData = ref({});
+const publishResourceId = ref('')
+
 
 const state = reactive({
   loading: false,
@@ -151,7 +183,7 @@ const isCanClick = (item) => {
 }
 
 const getVersion = (item) => {
-  return item.version_id ? item.version : '暂未发布版本'
+  return item.version_id ? item.num : '暂未发布版本'
 }
 const getTime = (time) => {
   return getyyyymmddMMss(time)
@@ -212,6 +244,17 @@ const onClickCreate = () => {
   router.push({
     path: `/resource/edit`,
   });
+}
+
+const onClickWatchData = (item) => {
+  jsonData.value = item.data;
+  isShowJson.value = true;
+}
+
+const onClickPublish = (item) => {
+  isPublishShow.value = true;
+  publishResourceId.value = item._id;
+  publishData.value = item.data;
 }
 
 onMounted(() => {

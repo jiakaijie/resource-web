@@ -1,8 +1,8 @@
 <template>
-  <el-dialog v-model="visible" title="查看JSON" @close="props.close">
+  <el-dialog v-model="visible" width="1000px" title="查看JSON" @close="props.close">
     <json-viewer 
       :value="jsonData"  
-      :expand-depth=5
+      :expand-depth=10
       boxed
       sort
     >
@@ -27,6 +27,7 @@ const props = defineProps({
   }
 })
 
-const visible = computed(()=> props.isShow);
+const visible = computed(() => props.isShow);
+const jsonData = computed(() => props.jsonData);
 </script>
 

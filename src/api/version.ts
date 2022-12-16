@@ -8,3 +8,11 @@ export const getVersionList = (data: any): AxiosPromise<any> => {
     params: data,
   })
 }
+
+export const createVersion = (data: any): AxiosPromise<any> => {
+  return http({
+    url: '/api/versions/create',
+    method: 'POST',
+    data,
+  })
+}

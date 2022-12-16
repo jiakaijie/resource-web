@@ -34,3 +34,13 @@ export const getResourceDetail = (id: string): AxiosPromise<any> => {
     }
   })
 }
+
+export const getVersionDetail = (id: any): AxiosPromise<any> => {
+  return http({
+    url: '/api/resources/versionDetail',
+    method: 'GET',
+    params: {
+      resource_id: id
+    }
+  })
+}

@@ -147,7 +147,7 @@
     :resource_id="publishResourceId"
     :data="publishData"
     :cancel="() => {isPublishShow = false}" 
-    :confirm="() => {isPublishShow = false}"
+    :confirm="onClickPublishDialogConfirm"
   />
   <el-dialog v-model="rollBackFormVisible" title="回滚版本">
     <el-form :model="rollBackForm">
@@ -243,6 +243,11 @@ async function handleQuery() {
     state.loading = false;
     console.error(err);
   }
+}
+
+const onClickPublishDialogConfirm = () => {
+  isPublishShow.value = false;
+  handleQuery();
 }
 
 function resetQuery() {
